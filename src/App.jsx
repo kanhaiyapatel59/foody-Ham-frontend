@@ -39,191 +39,154 @@ import AdminSpinPage from './pages/AdminSpinPage';
 
 function AppContent() {
   const { showSpin, closeSpin } = useSpin();
+
+  // ✅ STEP 3: Verify backend URL from Vercel
+  const API_URL = import.meta.env.VITE_API_URL;
+  console.log("API URL:", API_URL);
   
   return (
     <>
       <Router>
-          <Routes>
-            {/* Public routes without layout */}
-            <Route path="/login" element={<LoginPage />} />
-            
-            {/* Routes with layout */}
-            <Route path="/" element={<Layout />}>
-              <Route index element={<HomePage />} />
-              <Route path="menu" element={<MenuPage />} />
-              <Route path="about" element={<AboutPage />} />
-              <Route path="contact" element={<ContactPage />} />
-              <Route path="product/:id" element={<ProductDetailPage />} />
-              <Route path="product/custom-:id" element={<ProductDetailPage />} />
-              
-              {/* Protected Feedback Page */}
-              <Route path="feedback" element={
-                <ProtectedRoute>
-                  <FeedbackPage />
-                </ProtectedRoute>
-              } />
-              
-              {/* Existing Protected routes */}
-              <Route path="cart" element={
-                <ProtectedRoute>
-                  <CartPage />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="wishlist" element={
-                <ProtectedRoute>
-                  <WishlistPage />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="payment" element={
-                <ProtectedRoute>
-                  <PaymentPage />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="payment-success" element={
-                <ProtectedRoute>
-                  <PaymentSuccessPage />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="profile" element={ 
-                <ProtectedRoute>
-                  <ProfilePage />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="add-product" element={
-                <ProtectedRoute requireAdmin>
-                  <AddProductPage />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="admin/products" element={
-                <ProtectedRoute requireAdmin>
-                  <AdminProductsPage />
-                </ProtectedRoute>
-              } />
-              <Route 
-                path="/admin/feedback" 
-                element={
-                  <ProtectedRoute requireAdmin> 
-                    <AdminFeedbackPage />
-                  </ProtectedRoute>
-                } 
-              />
-              
-              <Route 
-                path="/admin/analytics" 
-                element={
-                  <ProtectedRoute requireAdmin> 
-                    <AdminAnalyticsPage />
-                  </ProtectedRoute>
-                } 
-              />
-              
-              <Route 
-                path="/admin/coupons" 
-                element={
-                  <ProtectedRoute requireAdmin> 
-                    <AdminCouponsPage />
-                  </ProtectedRoute>
-                } 
-              />
-              
-              <Route 
-                path="/orders" 
-                element={
-                  <ProtectedRoute> 
-                    <OrderHistoryPage />
-                  </ProtectedRoute>
-                } 
-              />
-              
-              <Route 
-                path="/admin/orders" 
-                element={
-                  <ProtectedRoute requireAdmin> 
-                    <AdminOrdersPage />
-                  </ProtectedRoute>
-                } 
-              />
-              
-              <Route 
-                path="/group-orders" 
-                element={
-                  <ProtectedRoute> 
-                    <GroupOrdersPage />
-                  </ProtectedRoute>
-                } 
-              />
-              
-              <Route 
-                path="/group-orders/:id" 
-                element={
-                  <ProtectedRoute> 
-                    <GroupOrderDetailPage />
-                  </ProtectedRoute>
-                } 
-              />
-              
-              <Route 
-                path="/reservations" 
-                element={
-                  <ProtectedRoute> 
-                    <ReservationsPage />
-                  </ProtectedRoute>
-                } 
-              />
-              
-              <Route 
-                path="/admin/reservations" 
-                element={
-                  <ProtectedRoute requireAdmin> 
-                    <AdminReservationsPage />
-                  </ProtectedRoute>
-                } 
-              />
-              
-              <Route 
-                path="/food-diary" 
-                element={
-                  <ProtectedRoute> 
-                    <FoodDiaryPage />
-                  </ProtectedRoute>
-                } 
-              />
-              
-              <Route 
-                path="/admin/promotions" 
-                element={
-                  <ProtectedRoute requireAdmin> 
-                    <AdminPromotionsPage />
-                  </ProtectedRoute>
-                } 
-              />
-              
-              <Route 
-                path="/loyalty" 
-                element={
-                  <ProtectedRoute> 
-                    <LoyaltyPage />
-                  </ProtectedRoute>
-                } 
-              />
-              
-              <Route 
-                path="/admin/spin" 
-                element={
-                  <ProtectedRoute requireAdmin> 
-                    <AdminSpinPage />
-                  </ProtectedRoute>
-                } 
-              />
-            </Route>
-          </Routes>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+
+          <Route path="/" element={<Layout />}>
+            <Route index element={<HomePage />} />
+            <Route path="menu" element={<MenuPage />} />
+            <Route path="about" element={<AboutPage />} />
+            <Route path="contact" element={<ContactPage />} />
+            <Route path="product/:id" element={<ProductDetailPage />} />
+            <Route path="product/custom-:id" element={<ProductDetailPage />} />
+
+            <Route path="feedback" element={
+              <ProtectedRoute>
+                <FeedbackPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="cart" element={
+              <ProtectedRoute>
+                <CartPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="wishlist" element={
+              <ProtectedRoute>
+                <WishlistPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="payment" element={
+              <ProtectedRoute>
+                <PaymentPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="payment-success" element={
+              <ProtectedRoute>
+                <PaymentSuccessPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="profile" element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="add-product" element={
+              <ProtectedRoute requireAdmin>
+                <AddProductPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="admin/products" element={
+              <ProtectedRoute requireAdmin>
+                <AdminProductsPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="admin/feedback" element={
+              <ProtectedRoute requireAdmin>
+                <AdminFeedbackPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="admin/analytics" element={
+              <ProtectedRoute requireAdmin>
+                <AdminAnalyticsPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="admin/coupons" element={
+              <ProtectedRoute requireAdmin>
+                <AdminCouponsPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="orders" element={
+              <ProtectedRoute>
+                <OrderHistoryPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="admin/orders" element={
+              <ProtectedRoute requireAdmin>
+                <AdminOrdersPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="group-orders" element={
+              <ProtectedRoute>
+                <GroupOrdersPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="group-orders/:id" element={
+              <ProtectedRoute>
+                <GroupOrderDetailPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="reservations" element={
+              <ProtectedRoute>
+                <ReservationsPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="admin/reservations" element={
+              <ProtectedRoute requireAdmin>
+                <AdminReservationsPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="food-diary" element={
+              <ProtectedRoute>
+                <FoodDiaryPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="admin/promotions" element={
+              <ProtectedRoute requireAdmin>
+                <AdminPromotionsPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="loyalty" element={
+              <ProtectedRoute>
+                <LoyaltyPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="admin/spin" element={
+              <ProtectedRoute requireAdmin>
+                <AdminSpinPage />
+              </ProtectedRoute>
+            } />
+          </Route>
+        </Routes>
       </Router>
+
       {showSpin && <SpinWheel onClose={closeSpin} />}
     </>
   );
