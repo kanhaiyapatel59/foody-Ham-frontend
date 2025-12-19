@@ -14,7 +14,7 @@ import { Share2 } from 'lucide-react';
 
 // Create axios instance
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api',
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3005/api',
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
@@ -158,7 +158,7 @@ function ProductDetailPage() {
   const handleReviewSubmit = async (formData) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3005/api/reviews', {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/reviews`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`

@@ -53,7 +53,7 @@ function PaymentPage() {
       }
 
       // Create order
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3003/api'}/orders`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3005/api'}/orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

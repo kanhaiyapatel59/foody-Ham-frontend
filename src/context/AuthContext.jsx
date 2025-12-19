@@ -5,7 +5,7 @@ import { signInWithPopup } from 'firebase/auth';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 export const api = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api",
+    baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:3005/api",
     headers: {
         "Content-Type": "application/json",
     },

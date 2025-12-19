@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Star, Gift, Trophy, Coins } from 'lucide-react';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const LoyaltyDashboard = () => {
   const [loyalty, setLoyalty] = useState(null);
   const [rewards, setRewards] = useState([]);
@@ -14,7 +16,7 @@ const LoyaltyDashboard = () => {
   const fetchLoyaltyData = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3005/api/loyalty', {
+      const response = await fetch(`${API_BASE_URL}/loyalty`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await response.json();
@@ -29,7 +31,7 @@ const LoyaltyDashboard = () => {
   const fetchRewards = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3005/api/loyalty/rewards', {
+      const response = await fetch(`${API_BASE_URL}/loyalty/rewards`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await response.json();
@@ -42,7 +44,7 @@ const LoyaltyDashboard = () => {
   const redeemReward = async (reward) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3005/api/loyalty/redeem', {
+      const response = await fetch(`${API_BASE_URL}/loyalty/redeem`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

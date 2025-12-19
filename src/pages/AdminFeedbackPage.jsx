@@ -13,7 +13,7 @@ import {
 
 // Create axios instance (make sure this is correctly configured with your base URL and credentials)
 const api = axios.create({
-  baseURL: 'http://localhost:3000/api', // Adjust if your backend is running on a different port/host
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3005/api',
   withCredentials: true,
 });
 

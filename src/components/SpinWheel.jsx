@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Gift, RotateCcw, Clock } from 'lucide-react';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const SpinWheel = ({ onClose }) => {
   const [canSpin, setCanSpin] = useState(false);
   const [spinning, setSpinning] = useState(false);
@@ -14,7 +16,7 @@ const SpinWheel = ({ onClose }) => {
   const checkCanSpin = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3005/api/spin/can-spin', {
+      const response = await fetch(`${API_BASE_URL}/spin/can-spin`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await response.json();
@@ -33,7 +35,7 @@ const SpinWheel = ({ onClose }) => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3005/api/spin/spin', {
+      const response = await fetch(`${API_BASE_URL}/spin/spin`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });

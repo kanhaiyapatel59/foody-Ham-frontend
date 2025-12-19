@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Star, ThumbsUp, Calendar } from 'lucide-react';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const ReviewList = ({ productId }) => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -11,7 +13,7 @@ const ReviewList = ({ productId }) => {
 
   const fetchReviews = async () => {
     try {
-      const response = await fetch(`http://localhost:3005/api/reviews/product/${productId}`);
+      const response = await fetch(`${API_BASE_URL}/reviews/product/${productId}`);
       const data = await response.json();
       setReviews(data.reviews || []);
     } catch (error) {
@@ -24,7 +26,7 @@ const ReviewList = ({ productId }) => {
   const markHelpful = async (reviewId) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3005/api/reviews/${reviewId}/helpful`, {
+      const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}/helpful`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -99,10 +101,10 @@ const ReviewList = ({ productId }) => {
               {review.photos.map((photo, index) => (
                 <img
                   key={index}
-                  src={`http://localhost:3005${photo.url}`}
+                  src={`${API_BASE_URL.replace('/api', '')}${photo.url}`}
                   alt="Review photo"
                   className="w-full h-20 object-cover rounded-lg cursor-pointer hover:opacity-80"
-                  onClick={() => window.open(`http://localhost:3005${photo.url}`, '_blank')}
+                  onClick={() => window.open(`${API_BASE_URL.replace('/api', '')}${photo.url}`, '_blank')}
                 />
               ))}
             </div>
