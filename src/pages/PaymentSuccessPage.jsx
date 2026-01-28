@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { FaCheckCircle, FaHome, FaReceipt } from 'react-icons/fa';
+import { useAuth } from '../context/AuthContext';
 
 function PaymentSuccessPage() {
   const location = useLocation();
   const { orderId, amount, paymentMethod } = location.state || {};
+  const { user } = useAuth();
 
   return (
     <div className="container mx-auto px-4 py-12 text-center">
@@ -50,7 +52,7 @@ function PaymentSuccessPage() {
         </div>
 
         <p className="text-sm text-gray-500 mt-6">
-          You will receive an order confirmation email shortly.
+          Your order has been placed successfully!
         </p>
       </div>
     </div>

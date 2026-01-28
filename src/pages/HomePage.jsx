@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import FoodCard from '../components/FoodCard';
 import PromotionBanner from '../components/PromotionBanner';
+import { useRecentlyViewed } from '../context/RecentlyViewedContext';
 import axios from 'axios';
 // Import Swiper React components - you'll need to install this
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -65,6 +66,7 @@ function HomePage() {
   const [heroImageIndex, setHeroImageIndex] = useState(0);
   const [isHeroVisible, setIsHeroVisible] = useState(true);
   const heroSectionRef = useRef(null);
+  const { recentlyViewed } = useRecentlyViewed();
 
   // Enhanced Background Slider with crossfade effect
   useEffect(() => {
@@ -222,7 +224,7 @@ function HomePage() {
                         View Menu
                     </Link>
                     <Link 
-                        to="/contact" 
+                        to="/reservations" 
                         // White outline button for dark background
                         className="px-8 py-3 text-white border-2 border-white/30 bg-transparent text-lg font-semibold rounded-full hover:bg-white/10 transition-colors"
                     >
@@ -385,6 +387,58 @@ function HomePage() {
           )}
         </div>
       </section>
+
+      {/* ======================================================= 
+          RECENTLY VIEWED SECTION
+          ======================================================= */}
+      {recentlyViewed.length > 0 && (
+        <section className="py-16 md:py-20 px-4 md:px-8 lg:px-16 bg-gray-800">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 text-sm text-orange-500 font-semibold mb-3">
+                <span className="w-2 h-2 bg-orange-500 rounded-full"></span>
+                CONTINUE BROWSING
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+                Recently <span className="text-orange-500">Viewed</span>
+              </h2>
+              <p className="text-lg text-gray-400 max-w-2xl mx-auto">
+                Pick up where you left off with these items you viewed recently
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {recentlyViewed.slice(0, 4).map((item) => (
+                <Link
+                  key={item.id}
+                  to={`/product/${item.id}`}
+                  state={{ product: item }}
+                  className="group block transform transition-all duration-300 hover:scale-[1.02] hover:-translate-y-2"
+                >
+                  <FoodCard
+                    {...item}
+                    className="bg-gray-700 border-gray-600 hover:border-orange-500"
+                  />
+                </Link>
+              ))}
+            </div>
+
+            {recentlyViewed.length > 4 && (
+              <div className="text-center mt-8">
+                <Link 
+                  to="/menu" 
+                  className="inline-flex items-center gap-2 text-lg font-semibold text-gray-300 hover:text-orange-500 transition-colors group"
+                >
+                  View All Recently Viewed
+                  <svg className="w-5 h-5 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </Link>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

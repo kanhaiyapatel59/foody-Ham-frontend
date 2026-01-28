@@ -10,7 +10,7 @@ const SocialShare = ({ product, onClose }) => {
   const shareLinks = {
     facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(shareText)}`,
     twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`,
-    instagram: `https://www.instagram.com/` // Instagram doesn't support direct sharing
+    instagram: `https://www.instagram.com/` 
   };
 
   const copyToClipboard = async () => {

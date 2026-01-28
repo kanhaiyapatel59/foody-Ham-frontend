@@ -3,6 +3,7 @@ import FoodCard from '../components/FoodCard';
 import SkeletonCard from '../components/SkeletonCard';
 import VoiceSearch from '../components/VoiceSearch';
 import { useNavigate, Link } from 'react-router-dom';
+import { useRecentlyViewed } from '../context/RecentlyViewedContext';
 import axios from 'axios';
 
 const api = axios.create({
@@ -55,6 +56,7 @@ function MenuPage() {
   const [dietaryFilter, setDietaryFilter] = useState('');
   const [sortBy, setSortBy] = useState('newest');
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const { recentlyViewed, addToRecentlyViewed } = useRecentlyViewed();
 
   // Background Slider Effect
   useEffect(() => {
@@ -430,6 +432,7 @@ function MenuPage() {
                   key={item.id}
                   to={`/product/${item.id}`} // Uses the correct path for navigation
                   state={{ product: item }} // Pass item data via state
+                  onClick={() => addToRecentlyViewed(item)} // Track recently viewed
                   className="group block transform transition-all duration-300 hover:scale-[1.02] hover:-translate-y-2"
                 >
                   {/* FoodCard with dark background and removed description */}
@@ -483,6 +486,41 @@ function MenuPage() {
               </button>
             </p>
           </div>
+
+          {/* Recently Viewed Section */}
+          {recentlyViewed.length > 0 && (
+            <div className="mt-16 mb-8">
+              <div className="max-w-4xl mx-auto">
+                <div className="bg-gray-800/90 backdrop-blur-sm p-6 rounded-2xl border border-gray-700 shadow-xl">
+                  <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                    <svg className="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    Recently Viewed
+                  </h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {recentlyViewed.slice(0, 4).map((item) => (
+                      <Link
+                        key={item.id}
+                        to={`/product/${item.id}`}
+                        state={{ product: item }}
+                        className="group block bg-gray-700 rounded-lg p-3 hover:bg-gray-600 transition-colors"
+                      >
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-full h-20 object-cover rounded mb-2"
+                        />
+                        <h4 className="text-white text-sm font-medium truncate">{item.name}</h4>
+                        <p className="text-orange-500 text-sm font-bold">${item.price.toFixed(2)}</p>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

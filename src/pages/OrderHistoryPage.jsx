@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useCart } from '../context/CartContext';
-import { X, RotateCcw } from 'lucide-react';
+import { X, RotateCcw, ShoppingCart } from 'lucide-react';
 
 const OrderHistoryPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
-  const { addToCart } = useCart();
+  const { reorderItems } = useCart();
 
   useEffect(() => {
     fetchOrders();
@@ -70,34 +70,19 @@ const OrderHistoryPage = () => {
     }
   };
 
-  const handleOrderAgain = async (orderId) => {
-    setActionLoading(orderId);
+  const handleReorder = async (order) => {
+    setActionLoading(order._id);
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/orders/${orderId}/items`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const result = await reorderItems(order.items);
       
-      const { availableItems, unavailableItems } = response.data.data;
-      
-      // Add available items to cart
-      for (const item of availableItems) {
-        await addToCart(item, item.quantity);
+      if (result.success) {
+        alert(`✅ ${result.addedItems} items added to cart!`);
+      } else {
+        alert(`❌ Failed to reorder: ${result.error}`);
       }
-      
-      let message = `${availableItems.length} items added to cart!`;
-      if (unavailableItems.length > 0) {
-        message += `\n\n${unavailableItems.length} items were unavailable:`;
-        unavailableItems.forEach(item => {
-          message += `\n- ${item.name} (${item.reason})`;
-        });
-      }
-      
-      alert(message);
     } catch (error) {
       console.error('Error reordering:', error);
-      alert(error.response?.data?.message || 'Failed to add items to cart');
+      alert('Failed to add items to cart');
     } finally {
       setActionLoading(null);
     }
@@ -161,12 +146,12 @@ const OrderHistoryPage = () => {
                   
                   {['delivered', 'cancelled'].includes(order.status) && (
                     <button
-                      onClick={() => handleOrderAgain(order._id)}
+                      onClick={() => handleReorder(order)}
                       disabled={actionLoading === order._id}
-                      className="flex items-center space-x-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center space-x-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
-                      <RotateCcw className="w-4 h-4" />
-                      <span>{actionLoading === order._id ? 'Adding...' : 'Order Again'}</span>
+                      <ShoppingCart className="w-4 h-4" />
+                      <span>{actionLoading === order._id ? 'Adding...' : 'Reorder'}</span>
                     </button>
                   )}
                 </div>

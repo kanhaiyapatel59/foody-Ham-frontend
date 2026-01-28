@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { FaTrash, FaPlus, FaMinus, FaShoppingCart, FaCreditCard, FaSpinner } from 'react-icons/fa';
+import { FaTrash, FaPlus, FaMinus, FaShoppingCart, FaCreditCard, FaSpinner, FaHistory } from 'react-icons/fa';
+import axios from 'axios';
 
 function CartPage() {
   const { 
@@ -10,12 +11,15 @@ function CartPage() {
     removeFromCart, 
     updateQuantity, 
     clearCart, 
-    getCartTotal 
+    getCartTotal,
+    reorderItems 
   } = useCart();
   
   const { user } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState('');
+  const [recentOrders, setRecentOrders] = useState([]);
+  const [loadingReorder, setLoadingReorder] = useState(null);
 
   const handleCheckout = () => {
     if (!user) {
@@ -46,6 +50,39 @@ function CartPage() {
     navigate('/payment', { state: { orderData } });
   };
 
+  useEffect(() => {
+    if (user) {
+      fetchRecentOrders();
+    }
+  }, [user]);
+
+  const fetchRecentOrders = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/orders?limit=3`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setRecentOrders(response.data.data || []);
+    } catch (error) {
+      console.error('Error fetching recent orders:', error);
+    }
+  };
+
+  const handleQuickReorder = async (order) => {
+    setLoadingReorder(order._id);
+    try {
+      const result = await reorderItems(order.items);
+      if (result.success) {
+        alert(`✅ ${result.addedItems} items added to cart!`);
+      }
+    } catch (error) {
+      alert('Failed to reorder items');
+    } finally {
+      setLoadingReorder(null);
+    }
+  };
+
 
 
   if (cartItems.length === 0) {
@@ -55,6 +92,39 @@ function CartPage() {
           <FaShoppingCart className="text-6xl text-gray-300 dark:text-gray-500 mx-auto mb-4" />
           <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-4">Your cart is empty</h1>
           <p className="text-gray-600 dark:text-gray-400 mb-8">Add some delicious items from our menu!</p>
+          
+          {/* Quick Reorder Section */}
+          {user && recentOrders.length > 0 && (
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4 flex items-center justify-center gap-2">
+                <FaHistory /> Quick Reorder
+              </h3>
+              <div className="space-y-3">
+                {recentOrders.slice(0, 2).map((order) => (
+                  <div key={order._id} className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                    <div className="flex justify-between items-center">
+                      <div className="text-left">
+                        <p className="font-medium text-gray-800 dark:text-gray-200">
+                          {order.items.length} items - ${order.totalPrice.toFixed(2)}
+                        </p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          {new Date(order.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => handleQuickReorder(order)}
+                        disabled={loadingReorder === order._id}
+                        className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 disabled:opacity-50 text-sm"
+                      >
+                        {loadingReorder === order._id ? 'Adding...' : 'Reorder'}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          
           <Link
             to="/menu"
             className="bg-orange-500 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-orange-600 transition duration-300 inline-block"

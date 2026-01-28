@@ -15,6 +15,8 @@ function PaymentPage() {
   const [paymentMethod, setPaymentMethod] = useState('card');
   const [loading, setLoading] = useState(false);
   const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [tipAmount, setTipAmount] = useState(0);
+  const [customTip, setCustomTip] = useState('');
   const [cardDetails, setCardDetails] = useState({
     number: '',
     expiry: '',
@@ -36,6 +38,22 @@ function PaymentPage() {
     return null;
   }
 
+  const subtotal = orderData.totalAmount - 5 - (orderData.totalAmount - 5) * 0.08;
+  const shippingFee = 5.00;
+  const taxAmount = (orderData.totalAmount - 5) * 0.08;
+  const finalTotal = orderData.totalAmount + tipAmount - (appliedCoupon?.discountAmount || 0);
+
+  const handleTipSelect = (percentage) => {
+    const tip = subtotal * (percentage / 100);
+    setTipAmount(tip);
+    setCustomTip('');
+  };
+
+  const handleCustomTip = (value) => {
+    setCustomTip(value);
+    setTipAmount(parseFloat(value) || 0);
+  };
+
   const handlePayment = async () => {
     setLoading(true);
     
@@ -53,22 +71,27 @@ function PaymentPage() {
       }
 
       // Create order
+      const orderPayload = {
+        ...orderData,
+        shippingAddress,
+        paymentMethod,
+        paymentStatus: paymentMethod === 'cash' ? 'pending' : 'completed',
+        tipAmount,
+        coupon: appliedCoupon ? {
+          code: appliedCoupon.code,
+          discountAmount: appliedCoupon.discountAmount
+        } : undefined
+      };
+      
+      console.log('Sending order payload:', JSON.stringify(orderPayload, null, 2));
+      
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3005/api'}/orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        body: JSON.stringify({
-          ...orderData,
-          shippingAddress,
-          paymentMethod,
-          paymentStatus: paymentMethod === 'cash' ? 'pending' : 'completed',
-          coupon: appliedCoupon ? {
-            code: appliedCoupon.code,
-            discountAmount: appliedCoupon.discountAmount
-          } : undefined
-        })
+        body: JSON.stringify(orderPayload)
       });
 
       console.log('Order response status:', response.status);
@@ -87,7 +110,7 @@ function PaymentPage() {
         navigate('/payment-success', { 
           state: { 
             orderId: data.data?._id || 'ORDER_' + Date.now(),
-            amount: orderData.totalAmount - (appliedCoupon?.discountAmount || 0),
+            amount: finalTotal,
             paymentMethod: paymentMethod
           }
         });
@@ -287,19 +310,80 @@ function PaymentPage() {
             />
           </div>
 
+          {/* Tip Calculator */}
+          <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+            <h3 className="text-lg font-semibold mb-4">Add Tip for Delivery</h3>
+            <div className="grid grid-cols-3 gap-2 mb-4">
+              <button
+                onClick={() => handleTipSelect(10)}
+                className={`py-2 px-4 rounded-lg border transition-colors ${
+                  Math.abs(tipAmount - subtotal * 0.1) < 0.01 
+                    ? 'bg-green-500 text-white border-green-500' 
+                    : 'bg-white border-gray-300 hover:border-green-500'
+                }`}
+              >
+                10%
+              </button>
+              <button
+                onClick={() => handleTipSelect(15)}
+                className={`py-2 px-4 rounded-lg border transition-colors ${
+                  Math.abs(tipAmount - subtotal * 0.15) < 0.01 
+                    ? 'bg-green-500 text-white border-green-500' 
+                    : 'bg-white border-gray-300 hover:border-green-500'
+                }`}
+              >
+                15%
+              </button>
+              <button
+                onClick={() => handleTipSelect(20)}
+                className={`py-2 px-4 rounded-lg border transition-colors ${
+                  Math.abs(tipAmount - subtotal * 0.2) < 0.01 
+                    ? 'bg-green-500 text-white border-green-500' 
+                    : 'bg-white border-gray-300 hover:border-green-500'
+                }`}
+              >
+                20%
+              </button>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-600">Custom:</span>
+              <input
+                type="number"
+                placeholder="0.00"
+                value={customTip}
+                onChange={(e) => handleCustomTip(e.target.value)}
+                className="flex-1 p-2 border rounded-lg"
+                min="0"
+                step="0.01"
+              />
+              <span className="text-sm text-gray-600">$</span>
+            </div>
+            {tipAmount > 0 && (
+              <p className="text-sm text-green-600 mt-2">
+                💝 Thank you! Tip: ${tipAmount.toFixed(2)}
+              </p>
+            )}
+          </div>
+
           <div className="border-t pt-4 space-y-2">
             <div className="flex justify-between">
               <span>Subtotal</span>
-              <span>${(orderData.totalAmount - 5 - (orderData.totalAmount - 5) * 0.08).toFixed(2)}</span>
+              <span>${subtotal.toFixed(2)}</span>
             </div>
             <div className="flex justify-between">
               <span>Shipping</span>
-              <span>$5.00</span>
+              <span>${shippingFee.toFixed(2)}</span>
             </div>
             <div className="flex justify-between">
               <span>Tax</span>
-              <span>${((orderData.totalAmount - 5) * 0.08).toFixed(2)}</span>
+              <span>${taxAmount.toFixed(2)}</span>
             </div>
+            {tipAmount > 0 && (
+              <div className="flex justify-between text-green-600">
+                <span>Tip</span>
+                <span>${tipAmount.toFixed(2)}</span>
+              </div>
+            )}
             {appliedCoupon && (
               <div className="flex justify-between text-green-600">
                 <span>Discount ({appliedCoupon.code})</span>
@@ -308,7 +392,7 @@ function PaymentPage() {
             )}
             <div className="flex justify-between text-xl font-bold border-t pt-2">
               <span>Total</span>
-              <span>${(orderData.totalAmount - (appliedCoupon?.discountAmount || 0)).toFixed(2)}</span>
+              <span>${finalTotal.toFixed(2)}</span>
             </div>
           </div>
 
@@ -319,7 +403,7 @@ function PaymentPage() {
           >
             <FaLock />
             {loading ? 'Processing...' : 
-             paymentMethod === 'cash' ? 'Place Order' : `Pay $${(orderData.totalAmount - (appliedCoupon?.discountAmount || 0)).toFixed(2)}`}
+             paymentMethod === 'cash' ? 'Place Order' : `Pay $${finalTotal.toFixed(2)}`}
           </button>
 
           <div className="text-center mt-4 text-sm text-gray-500">

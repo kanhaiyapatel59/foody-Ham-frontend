@@ -223,6 +223,35 @@ export const CartProvider = ({ children }) => {
     return cartItems.reduce((count, item) => count + item.quantity, 0);
   }, [cartItems]);
 
+  const reorderItems = useCallback(async (orderItems) => {
+    try {
+      setLoading(true);
+      let successCount = 0;
+      
+      for (const item of orderItems) {
+        try {
+          await addToCart({
+            _id: item.product,
+            id: item.product,
+            name: item.name,
+            price: item.price,
+            image: item.image
+          }, item.quantity);
+          successCount++;
+        } catch (error) {
+          console.error(`Failed to add ${item.name} to cart:`, error);
+        }
+      }
+      
+      return { success: true, addedItems: successCount, totalItems: orderItems.length };
+    } catch (error) {
+      console.error('Reorder failed:', error);
+      return { success: false, error: error.message };
+    } finally {
+      setLoading(false);
+    }
+  }, [addToCart]);
+
   const value = {
     cartItems,
     addToCart,
@@ -231,6 +260,7 @@ export const CartProvider = ({ children }) => {
     clearCart,
     getCartTotal,
     getCartCount,
+    reorderItems,
     loading
   };
 
