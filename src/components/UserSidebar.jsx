@@ -1,8 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
 import { FaUser, FaSignOutAlt, FaTimes } from 'react-icons/fa';
 
 function UserSidebar({ isOpen, onClose, user, onLogout }) {
+  const { t } = useLanguage();
   if (!isOpen) return null;
 
   return (
@@ -44,7 +46,7 @@ function UserSidebar({ isOpen, onClose, user, onLogout }) {
             <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center shadow-md group-hover:shadow-xl transition-shadow">
               <FaUser className="text-white" />
             </div>
-            <span className="font-medium text-gray-700 dark:text-gray-300">My Profile</span>
+            <span className="font-medium text-gray-700 dark:text-gray-300">{t('myProfile')}</span>
           </Link>
           
           <Link
@@ -55,7 +57,7 @@ function UserSidebar({ isOpen, onClose, user, onLogout }) {
             <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center shadow-md group-hover:shadow-xl transition-shadow">
               <span className="text-white text-lg">📋</span>
             </div>
-            <span className="font-medium text-gray-700 dark:text-gray-300">My Orders</span>
+            <span className="font-medium text-gray-700 dark:text-gray-300">{t('myOrders')}</span>
           </Link>
           
           <Link
@@ -102,6 +104,17 @@ function UserSidebar({ isOpen, onClose, user, onLogout }) {
             <span className="font-medium text-gray-700 dark:text-gray-300">Loyalty Rewards</span>
           </Link>
           
+          <Link
+            to="/subscriptions"
+            className="flex items-center gap-3 p-4 hover:bg-orange-50 dark:hover:bg-gray-800 rounded-xl transition-all duration-300 group transform hover:scale-105 hover:shadow-lg"
+            onClick={onClose}
+          >
+            <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center shadow-md group-hover:shadow-xl transition-shadow">
+              <span className="text-white text-lg">📅</span>
+            </div>
+            <span className="font-medium text-gray-700 dark:text-gray-300">Meal Plans</span>
+          </Link>
+          
           <button
             onClick={() => {
               onClose();
@@ -125,7 +138,7 @@ function UserSidebar({ isOpen, onClose, user, onLogout }) {
             <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center shadow-md group-hover:shadow-xl transition-shadow">
               <FaSignOutAlt className="text-white" />
             </div>
-            <span className="font-medium text-red-600 dark:text-red-400">Logout</span>
+            <span className="font-medium text-red-600 dark:text-red-400">{t('logout')}</span>
           </button>
         </div>
       </div>

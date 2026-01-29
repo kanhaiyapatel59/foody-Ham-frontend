@@ -4,8 +4,12 @@ import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from "./context/CartContext";
 import { WishlistProvider } from './context/WishlistContext';
 import { RecentlyViewedProvider } from './context/RecentlyViewedContext';
+import { LanguageProvider } from './context/LanguageContext';
+import { ChatProvider } from './context/ChatContext';
+import { GroupSplitProvider } from './context/GroupSplitContext';
 import { SpinProvider, useSpin } from './context/SpinContext';
-import SpinWheel from './components/SpinWheel'; 
+import SpinWheel from './components/SpinWheel';
+import ChatWidget from './components/ChatWidget'; 
 import Layout from './components/Layout';
 import ErrorBoundary from './components/ErrorBoundary';
 import HomePage from './pages/HomePage';
@@ -35,13 +39,14 @@ import AdminReservationsPage from './pages/AdminReservationsPage';
 import FoodDiaryPage from './pages/FoodDiaryPage';
 import AdminPromotionsPage from './pages/AdminPromotionsPage';
 import LoyaltyPage from './pages/LoyaltyPage';
+import SubscriptionsPage from './pages/SubscriptionsPage';
 import AdminSpinPage from './pages/AdminSpinPage';
 
 function AppContent() {
   const { showSpin, closeSpin } = useSpin();
 
   // ✅ STEP 3: Verify backend URL from Vercel
-  const API_URL = import.meta.env.VITE_API_URL;
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
   console.log("API URL:", API_URL);
   
   return (
@@ -178,6 +183,12 @@ function AppContent() {
               </ProtectedRoute>
             } />
 
+            <Route path="subscriptions" element={
+              <ProtectedRoute>
+                <SubscriptionsPage />
+              </ProtectedRoute>
+            } />
+
             <Route path="admin/spin" element={
               <ProtectedRoute requireAdmin>
                 <AdminSpinPage />
@@ -188,6 +199,7 @@ function AppContent() {
       </Router>
 
       {showSpin && <SpinWheel onClose={closeSpin} />}
+      <ChatWidget />
     </>
   );
 }
@@ -195,17 +207,23 @@ function AppContent() {
 function App() {
   return (
     <ErrorBoundary>
-      <AuthProvider>
-        <CartProvider>
-          <WishlistProvider>
-            <RecentlyViewedProvider>
-              <SpinProvider>
-                <AppContent />
-              </SpinProvider>
-            </RecentlyViewedProvider>
-          </WishlistProvider>
-        </CartProvider>
-      </AuthProvider>
+      <LanguageProvider>
+        <ChatProvider>
+          <GroupSplitProvider>
+            <AuthProvider>
+              <CartProvider>
+                <WishlistProvider>
+                  <RecentlyViewedProvider>
+                    <SpinProvider>
+                      <AppContent />
+                    </SpinProvider>
+                  </RecentlyViewedProvider>
+                </WishlistProvider>
+              </CartProvider>
+            </AuthProvider>
+          </GroupSplitProvider>
+        </ChatProvider>
+      </LanguageProvider>
     </ErrorBoundary>
   );
 }

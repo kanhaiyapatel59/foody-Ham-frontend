@@ -42,6 +42,11 @@ function PaymentPage() {
   const shippingFee = 5.00;
   const taxAmount = (orderData.totalAmount - 5) * 0.08;
   const finalTotal = orderData.totalAmount + tipAmount - (appliedCoupon?.discountAmount || 0);
+  
+  // Currency conversion: USD to INR (1 USD = 83 INR approximately)
+  const USD_TO_INR = 83;
+  const convertToINR = (usdAmount) => usdAmount * USD_TO_INR;
+  const finalTotalINR = convertToINR(finalTotal);
 
   const handleTipSelect = (percentage) => {
     const tip = subtotal * (percentage / 100);
@@ -391,8 +396,12 @@ function PaymentPage() {
               </div>
             )}
             <div className="flex justify-between text-xl font-bold border-t pt-2">
-              <span>Total</span>
+              <span>Total (USD)</span>
               <span>${finalTotal.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between text-lg font-semibold text-green-600">
+              <span>Total (INR)</span>
+              <span>₹{finalTotalINR.toFixed(2)}</span>
             </div>
           </div>
 
@@ -403,7 +412,7 @@ function PaymentPage() {
           >
             <FaLock />
             {loading ? 'Processing...' : 
-             paymentMethod === 'cash' ? 'Place Order' : `Pay $${finalTotal.toFixed(2)}`}
+             paymentMethod === 'cash' ? 'Place Order' : `Pay ₹${finalTotalINR.toFixed(2)} (${finalTotal.toFixed(2)} USD)`}
           </button>
 
           <div className="text-center mt-4 text-sm text-gray-500">
