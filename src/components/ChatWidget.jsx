@@ -39,7 +39,7 @@ const ChatWidget = () => {
 
   return (
     <>
-      {/* Chat Toggle Button */}
+
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}

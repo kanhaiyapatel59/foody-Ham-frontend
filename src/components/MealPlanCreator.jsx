@@ -102,8 +102,7 @@ const MealPlanCreator = ({ onClose, onSuccess }) => {
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      
-      // Validate required fields
+ 
       if (!planData.planName || !planData.deliveryAddress.street || planData.items.length === 0) {
         alert('Please fill in all required fields and add at least one meal.');
         return;

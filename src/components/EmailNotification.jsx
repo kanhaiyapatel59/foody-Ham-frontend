@@ -7,7 +7,7 @@ const EmailNotification = ({ show, onClose, orderData }) => {
   useEffect(() => {
     if (show) {
       setIsVisible(true);
-      // Auto close after 5 seconds
+ 
       const timer = setTimeout(() => {
         handleClose();
       }, 5000);
