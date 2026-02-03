@@ -4,7 +4,7 @@ const LanguageContext = createContext();
 
 const translations = {
   en: {
-    // Navigation
+   
     home: 'Home',
     menu: 'Menu',
     cart: 'Cart',
@@ -29,7 +29,7 @@ const translations = {
     edit: 'Edit',
     delete: 'Delete',
     
-    // Menu
+
     allCategories: 'All Categories',
     searchPlaceholder: 'Search dishes by name, description, or ingredients...',
     noResults: 'No Results Found',
@@ -48,7 +48,7 @@ const translations = {
     orderStatus: 'Order Status',
     reorder: 'Reorder',
     
-    // Profile
+
     myProfile: 'My Profile',
     myOrders: 'My Orders',
     wishlist: 'Wishlist',

@@ -3,13 +3,13 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 const ChatContext = createContext();
 
 const FAQ_RESPONSES = {
-  // Order related
+ 
   'order': 'To place an order: 1) Browse our Menu, 2) Add items to Cart, 3) Click Checkout, 4) Enter delivery details, 5) Make payment. Orders typically take 20-45 minutes for delivery.',
   'how to order': 'To place an order: 1) Browse our Menu, 2) Add items to Cart, 3) Click Checkout, 4) Enter delivery details, 5) Make payment. It\'s that simple!',
   'place order': 'To place an order: 1) Browse our Menu, 2) Add items to Cart, 3) Click Checkout, 4) Enter delivery details, 5) Make payment.',
   'ordering': 'To place an order: 1) Browse our Menu, 2) Add items to Cart, 3) Click Checkout, 4) Enter delivery details, 5) Make payment.',
   
-  // Status and tracking
+ 
   'order status': 'You can check your order status in the "Orders" section of your profile. Orders typically take 20-45 minutes for delivery.',
   'track order': 'You can track your order in the "Orders" section of your profile. You\'ll see real-time updates on preparation and delivery.',
   'where is my order': 'You can check your order status in the "Orders" section of your profile. Orders typically take 20-45 minutes for delivery.',
