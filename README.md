@@ -255,7 +255,7 @@ VITE_NODE_ENV=development
 - Compressed assets
 - Smart caching strategies
 
-## 🛠️ Development Tools
+##  Development Tools
 - Hot Module Replacement (HMR) with Vite
 - ESLint for code quality
 - Prettier for code formatting
@@ -279,11 +279,9 @@ VITE_NODE_ENV=development
 ## 🤝 Contributing
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 📄 License
-This project is licensed under the MIT License.
 
 ## 👨‍💻 Developer
-Built with ❤️ by [Your Name]
+Built with ❤️ by Kanhaiya Patel
 
 ---
 
