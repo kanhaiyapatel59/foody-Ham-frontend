@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { api } from './AuthContext';
 import { useAuth } from './AuthContext';
@@ -11,24 +12,23 @@ export const CartProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
-  // Load cart from backend or localStorage
   useEffect(() => {
     const loadCart = async () => {
       setLoading(true);
       
       if (user) {
-        // Load from backend if user is logged in
+
         try {
           const response = await api.get('/cart');
           const backendCart = response.data.data.items || [];
           setCartItems(backendCart);
         } catch (error) {
           console.error('Error loading cart from backend:', error);
-          // Fallback to localStorage
+
           loadFromLocalStorage();
         }
       } else {
-        // Load from localStorage if not logged in
+
         loadFromLocalStorage();
       }
       
@@ -55,16 +55,15 @@ export const CartProvider = ({ children }) => {
     loadCart();
   }, [user]);
 
-  // Sync cart to backend when user logs in
+
   useEffect(() => {
     const syncCartOnLogin = async () => {
       if (user && cartItems.length > 0) {
         try {
-          // Get current backend cart
+
           const response = await api.get('/cart');
           const backendItems = response.data.data.items || [];
           
-          // If backend cart is empty, sync localStorage items
           if (backendItems.length === 0) {
             for (const item of cartItems) {
               await api.post('/cart', {
@@ -72,7 +71,6 @@ export const CartProvider = ({ children }) => {
                 quantity: item.quantity
               });
             }
-            // Reload cart from backend
             const updatedResponse = await api.get('/cart');
             setCartItems(updatedResponse.data.data.items || []);
           }
@@ -91,8 +89,17 @@ export const CartProvider = ({ children }) => {
       price: typeof product.price === 'string' ? parseFloat(product.price) : product.price
     };
 
+    // Check current quantity in cart
+    const existingItem = cartItems.find(item => (item.id || item._id || item.product) === (product.id || product._id));
+    const currentQuantity = existingItem ? existingItem.quantity : 0;
+    const newQuantity = currentQuantity + quantity;
+
+    if (newQuantity > 10) {
+      alert('⚠️ Maximum quantity limit reached! You can only add up to 10 items of this product.');
+      return;
+    }
+
     if (user) {
-      // Add to backend if user is logged in
       try {
         const response = await api.post('/cart', {
           productId: product._id || product.id,
@@ -106,17 +113,18 @@ export const CartProvider = ({ children }) => {
         }
       } catch (error) {
         console.error('Error adding to cart:', error);
-        // Show user-friendly message
-        alert('Added to cart locally. Please refresh to sync with server.');
-        // Fallback to localStorage
-        updateLocalStorage(productWithNumberPrice, quantity);
+        if (error.response?.data?.message) {
+          alert(error.response.data.message);
+        } else {
+          alert('Added to cart locally. Please refresh to sync with server.');
+          updateLocalStorage(productWithNumberPrice, quantity);
+        }
       }
     } else {
-      // Add to localStorage if not logged in
       updateLocalStorage(productWithNumberPrice, quantity);
       alert('Item added to cart! Please login to save your cart.');
     }
-  }, [user]);
+  }, [user, cartItems]);
 
   const updateLocalStorage = (product, quantity) => {
     setCartItems(prevItems => {
@@ -124,13 +132,14 @@ export const CartProvider = ({ children }) => {
       
       let newItems;
       if (existingItem) {
+        const newQuantity = Math.min(existingItem.quantity + quantity, 10);
         newItems = prevItems.map(item =>
           (item.id || item._id) === (product.id || product._id)
-            ? { ...item, quantity: item.quantity + quantity }
+            ? { ...item, quantity: newQuantity }
             : item
         );
       } else {
-        newItems = [...prevItems, { ...product, quantity }];
+        newItems = [...prevItems, { ...product, quantity: Math.min(quantity, 10) }];
       }
       
       localStorage.setItem('foodyham_cart', JSON.stringify(newItems));
@@ -145,7 +154,7 @@ export const CartProvider = ({ children }) => {
         setCartItems(response.data.data.items || []);
       } catch (error) {
         console.error('Error removing from cart:', error);
-        // Fallback to localStorage
+
         setCartItems(prevItems => {
           const newItems = prevItems.filter(item => (item.id || item._id) !== productId);
           localStorage.setItem('foodyham_cart', JSON.stringify(newItems));
@@ -166,6 +175,11 @@ export const CartProvider = ({ children }) => {
       removeFromCart(productId);
       return;
     }
+
+    if (quantity > 10) {
+      alert('⚠️ Maximum quantity limit is 10 items per product.');
+      return;
+    }
     
     if (user) {
       try {
@@ -175,19 +189,22 @@ export const CartProvider = ({ children }) => {
         setCartItems(response.data.data.items || []);
       } catch (error) {
         console.error('Error updating quantity:', error);
-        // Fallback to localStorage
-        setCartItems(prevItems => {
-          const newItems = prevItems.map(item =>
-            (item.id || item._id) === productId ? { ...item, quantity } : item
-          );
-          localStorage.setItem('foodyham_cart', JSON.stringify(newItems));
-          return newItems;
-        });
+        if (error.response?.data?.message) {
+          alert(error.response.data.message);
+        } else {
+          setCartItems(prevItems => {
+            const newItems = prevItems.map(item =>
+              (item.id || item._id) === productId ? { ...item, quantity: Math.min(quantity, 10) } : item
+            );
+            localStorage.setItem('foodyham_cart', JSON.stringify(newItems));
+            return newItems;
+          });
+        }
       }
     } else {
       setCartItems(prevItems => {
         const newItems = prevItems.map(item =>
-          (item.id || item._id) === productId ? { ...item, quantity } : item
+          (item.id || item._id) === productId ? { ...item, quantity: Math.min(quantity, 10) } : item
         );
         localStorage.setItem('foodyham_cart', JSON.stringify(newItems));
         return newItems;
