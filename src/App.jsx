@@ -30,6 +30,7 @@ import WishlistPage from './pages/WishlistPage';
 import AdminAnalyticsPage from './pages/AdminAnalyticsPage';
 import AdminCouponsPage from './pages/AdminCouponsPage';
 import OrderHistoryPage from './pages/OrderHistoryPage';
+import OrderTrackingPage from './pages/OrderTrackingPage';
 import AdminOrdersPage from './pages/AdminOrdersPage';
 import GroupOrdersPage from './pages/GroupOrdersPage';
 import GroupOrderDetailPage from './pages/GroupOrderDetailPage';
@@ -132,6 +133,12 @@ function AppContent() {
             <Route path="orders" element={
               <ProtectedRoute>
                 <OrderHistoryPage />
+              </ProtectedRoute>
+            } />
+
+            <Route path="orders/:orderId/track" element={
+              <ProtectedRoute>
+                <OrderTrackingPage />
               </ProtectedRoute>
             } />
 

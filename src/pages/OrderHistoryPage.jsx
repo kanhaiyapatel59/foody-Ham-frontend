@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useCart } from '../context/CartContext';
-import { X, RotateCcw, ShoppingCart } from 'lucide-react';
+import { X, RotateCcw, ShoppingCart, Navigation } from 'lucide-react';
 
 const OrderHistoryPage = () => {
   const [orders, setOrders] = useState([]);
@@ -60,7 +61,7 @@ const OrderHistoryPage = () => {
       
       if (response.data.success) {
         alert('Order cancelled successfully. Refund added to your wallet.');
-        fetchOrders(); // Refresh orders
+        fetchOrders();
       }
     } catch (error) {
       console.error('Error cancelling order:', error);
@@ -74,70 +75,101 @@ const OrderHistoryPage = () => {
     setActionLoading(order._id);
     try {
       const result = await reorderItems(order.items);
-      
       if (result.success) {
         alert(`✅ ${result.addedItems} items added to cart!`);
       } else {
-        alert(`❌ Failed to reorder: ${result.error}`);
+        alert(result.message || 'Failed to add items to cart');
       }
     } catch (error) {
       console.error('Error reordering:', error);
-      alert('Failed to add items to cart');
+      alert('Failed to reorder items');
     } finally {
       setActionLoading(null);
     }
   };
 
   if (loading) {
-    return <div className="flex justify-center items-center h-64">Loading orders...</div>;
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-4xl text-center">
+        <p className="text-gray-600">Loading order history...</p>
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Order History</h1>
+    <div className="container mx-auto px-4 py-8 max-w-4xl font-sans">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Order History</h1>
+
+        <Link
+          to="/orders/demo/track"
+          className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-extrabold rounded-2xl shadow-lg shadow-orange-500/20 hover:scale-105 transition-all text-xs"
+        >
+          <span className="w-2 h-2 rounded-full bg-white animate-ping"></span>
+          <Navigation size={14} />
+          <span>🛵 Live Delivery GPS Tracker Demo</span>
+        </Link>
+      </div>
       
       {orders.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-gray-500 text-lg">No orders found</p>
+        <div className="text-center py-12 bg-white dark:bg-gray-900 rounded-3xl p-8 border border-gray-100 dark:border-gray-800">
+          <p className="text-gray-600 dark:text-gray-400 mb-4">You haven't placed any orders yet.</p>
+          <div className="flex justify-center gap-4">
+            <Link to="/menu" className="inline-block bg-orange-500 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-orange-600 transition-colors">
+              Browse Menu
+            </Link>
+            <Link to="/orders/demo/track" className="inline-block bg-slate-900 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-slate-800 transition-colors">
+              🛵 Demo Live GPS Tracking
+            </Link>
+          </div>
         </div>
       ) : (
         <div className="space-y-6">
           {orders.map((order) => (
-            <div key={order._id} className="bg-white rounded-lg shadow-md p-6">
+            <div key={order._id} className="bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-800">
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h3 className="text-lg font-semibold">Order #{order._id.slice(-8)}</h3>
-                  <p className="text-gray-600">{new Date(order.createdAt).toLocaleDateString()}</p>
+                  <h3 className="font-extrabold text-lg text-gray-900 dark:text-white">Order #{order._id?.slice(-8).toUpperCase()}</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{new Date(order.createdAt).toLocaleDateString()}</p>
                 </div>
-                <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
+                <span className={`px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(order.status)}`}>
                   {order.status?.charAt(0).toUpperCase() + order.status?.slice(1)}
                 </span>
               </div>
               
-              <div className="border-t pt-4">
-                <h4 className="font-medium mb-2">Items:</h4>
+              <div className="border-t border-gray-100 dark:border-gray-800 pt-4">
+                <h4 className="font-semibold text-xs text-gray-500 uppercase tracking-wider mb-2">Items:</h4>
                 <div className="space-y-2">
-                  {order.items.map((item, index) => (
-                    <div key={index} className="flex justify-between">
-                      <span>{item.name} x {item.quantity}</span>
-                      <span>${(item.price * item.quantity).toFixed(2)}</span>
+                  {order.items?.map((item, index) => (
+                    <div key={index} className="flex justify-between text-sm">
+                      <span className="text-gray-700 dark:text-gray-300 font-medium">{item.name} x {item.quantity}</span>
+                      <span className="font-bold text-gray-900 dark:text-white">${(item.price * item.quantity).toFixed(2)}</span>
                     </div>
                   ))}
                 </div>
               </div>
               
-              <div className="border-t pt-4 mt-4">
+              <div className="border-t border-gray-100 dark:border-gray-800 pt-4 mt-4">
                 <div className="flex justify-between items-center mb-4">
-                  <span className="font-semibold">Total: ${order.totalPrice.toFixed(2)}</span>
-                  <span className="text-sm text-gray-600">Payment: {order.paymentMethod}</span>
+                  <span className="font-black text-base text-gray-900 dark:text-white">Total: ${order.totalPrice?.toFixed(2)}</span>
+                  <span className="text-xs font-semibold text-gray-500">Payment: {order.paymentMethod}</span>
                 </div>
                 
-                <div className="flex gap-3">
+                <div className="flex flex-wrap gap-3">
+                  <Link
+                    to={`/orders/${order._id}/track`}
+                    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-extrabold text-xs rounded-xl shadow-md shadow-orange-500/20 hover:scale-105 transition-transform"
+                  >
+                    <span className="w-2 h-2 rounded-full bg-white animate-ping"></span>
+                    <Navigation size={14} />
+                    <span>Track Live GPS</span>
+                  </Link>
+
                   {canCancelOrder(order.status) && (
                     <button
                       onClick={() => handleCancelOrder(order._id)}
                       disabled={actionLoading === order._id}
-                      className="flex items-center space-x-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center space-x-2 px-4 py-2 bg-red-500 text-white text-xs font-bold rounded-xl hover:bg-red-600 disabled:opacity-50 transition-colors"
                     >
                       <X className="w-4 h-4" />
                       <span>{actionLoading === order._id ? 'Cancelling...' : 'Cancel Order'}</span>
@@ -148,7 +180,7 @@ const OrderHistoryPage = () => {
                     <button
                       onClick={() => handleReorder(order)}
                       disabled={actionLoading === order._id}
-                      className="flex items-center space-x-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="flex items-center space-x-2 px-4 py-2 bg-emerald-600 text-white text-xs font-bold rounded-xl hover:bg-emerald-700 disabled:opacity-50 transition-colors"
                     >
                       <ShoppingCart className="w-4 h-4" />
                       <span>{actionLoading === order._id ? 'Adding...' : 'Reorder'}</span>

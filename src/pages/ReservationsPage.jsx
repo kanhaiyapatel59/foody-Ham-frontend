@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import InteractiveSeatingMap from '../components/InteractiveSeatingMap';
 
 const ReservationsPage = () => {
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showBookingModal, setShowBookingModal] = useState(false);
+  const [selectedTableId, setSelectedTableId] = useState('T1');
   const [newReservation, setNewReservation] = useState({
     date: '',
     time: '',
     partySize: 2,
     specialOccasion: '',
     specialRequests: '',
-    contactPhone: ''
+    contactPhone: '',
+    tableNumber: 'T1'
   });
 
   const timeSlots = [
@@ -133,9 +136,20 @@ const ReservationsPage = () => {
 
       {/* Booking Modal */}
       {showBookingModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
-            <h2 className="text-2xl font-bold mb-4">Book a Table</h2>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-900 rounded-3xl p-6 sm:p-8 w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-100 dark:border-gray-800">
+            <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-6">Book a Table</h2>
+            
+            <div className="mb-6">
+              <InteractiveSeatingMap
+                selectedTableId={selectedTableId}
+                onSelectTable={(tableId) => {
+                  setSelectedTableId(tableId);
+                  setNewReservation({ ...newReservation, tableNumber: tableId });
+                }}
+              />
+            </div>
+
             <form onSubmit={createReservation}>
               <div className="space-y-4">
                 <div>

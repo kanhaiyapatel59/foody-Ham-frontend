@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import BackToTop from './BackToTop';
+import HamAIChatbot from './HamAIChatbot';
 
 function Layout() {
   return (
@@ -13,6 +14,7 @@ function Layout() {
       </main>
       <Footer />
       <BackToTop />
+      <HamAIChatbot />
     </div>
   );
 }
