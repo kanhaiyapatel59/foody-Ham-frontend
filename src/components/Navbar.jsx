@@ -17,6 +17,7 @@ function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showAdminSidebar, setShowAdminSidebar] = useState(false);
   const [showUserSidebar, setShowUserSidebar] = useState(false);
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   // Detect scroll for navbar effect
@@ -75,16 +76,20 @@ function Navbar() {
       <div className="container mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between">
           
-          {/* Left Side: 3-Line Sidebar Menu Toggle + Logo */}
+          {/* Left Side: Professional 3-Line Sidebar Toggle + Logo */}
           <div className="flex items-center gap-3">
             {user && (
               <button
                 onClick={() => user.isAdmin ? setShowAdminSidebar(!showAdminSidebar) : setShowUserSidebar(!showUserSidebar)}
-                className="p-2.5 bg-gradient-to-br from-orange-500 to-amber-500 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95 flex items-center justify-center"
-                title={(showAdminSidebar || showUserSidebar) ? "Close Navigation Menu" : "Open Navigation Menu"}
+                className="p-2.5 rounded-2xl bg-white/90 dark:bg-gray-800/90 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400 hover:border-orange-400 dark:hover:border-orange-500 shadow-sm hover:shadow-md transition-all duration-300 transform active:scale-95 flex items-center justify-center group"
+                title={(showAdminSidebar || showUserSidebar) ? "Close Navigation Sidebar" : "Open Navigation Sidebar"}
                 aria-label="Toggle Left Sidebar Menu"
               >
-                {(showAdminSidebar || showUserSidebar) ? <FaTimes size={20} /> : <FaBars size={20} />}
+                {(showAdminSidebar || showUserSidebar) ? (
+                  <FaTimes size={20} className="transition-transform duration-300 rotate-90 group-hover:rotate-180" />
+                ) : (
+                  <FaBars size={20} className="transition-transform duration-300 group-hover:scale-110" />
+                )}
               </button>
             )}
 
@@ -197,36 +202,36 @@ function Navbar() {
               ) : null}
             </Link>
 
-            {/* Enhanced User Profile & Top Right Logout */}
+            {/* Professional Top Right Profile & Dropdown */}
             {authLoading ? (
               <div className="p-2.5 bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-md border border-gray-100">
                 <FaSpinner className="animate-spin text-gray-400" size={20} />
               </div>
             ) : user ? (
-              <div className="flex items-center gap-3">
+              <div className="relative">
                 <button
-                  onClick={() => user.isAdmin ? setShowAdminSidebar(!showAdminSidebar) : setShowUserSidebar(!showUserSidebar)}
-                  className="flex items-center gap-3 group"
+                  onClick={() => setShowProfileDropdown(!showProfileDropdown)}
+                  className="flex items-center gap-3 p-1.5 pr-3 rounded-2xl bg-gradient-to-r from-gray-50 to-orange-50/50 dark:from-gray-800 dark:to-gray-800/50 border border-gray-200/80 dark:border-gray-700/80 hover:border-orange-400 dark:hover:border-orange-500 shadow-sm hover:shadow-md transition-all duration-300 group"
                   disabled={authLoading}
-                  title="Toggle Sidebar Navigation"
+                  title="Click for Profile & Logout options"
                 >
                   <div className="relative">
-                    <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-500 rounded-full flex items-center justify-center shadow-[0_4px_12px_rgba(249,115,22,0.3)] group-hover:shadow-[0_6px_16px_rgba(249,115,22,0.5)] transition-all duration-300 transform group-hover:scale-110">
+                    <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl flex items-center justify-center shadow-md group-hover:shadow-lg transition-all duration-300 transform group-hover:scale-105">
                       <FaUser className="text-white text-lg" />
                     </div>
                     {user.isAdmin && (
-                      <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-gradient-to-r from-amber-500 to-yellow-500 rounded-full flex items-center justify-center">
-                        <FaCrown className="text-white text-xs" />
+                      <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-amber-500 rounded-full flex items-center justify-center shadow-sm border-2 border-white dark:border-gray-800">
+                        <FaCrown className="text-white text-[9px]" />
                       </div>
                     )}
                   </div>
                   
-                  <div className="hidden lg:flex flex-col items-start">
-                    <span className="font-semibold text-gray-800 dark:text-gray-100">{user.name}</span>
-                    <span className="text-xs text-gray-500 flex items-center gap-1">
+                  <div className="hidden lg:flex flex-col items-start text-left">
+                    <span className="font-bold text-sm text-gray-800 dark:text-gray-100 group-hover:text-orange-600 transition-colors">{user.name}</span>
+                    <span className="text-[11px] font-semibold text-orange-600 dark:text-orange-400 flex items-center gap-1">
                       {user.isAdmin ? (
                         <>
-                          <FaCrown className="text-amber-500" />
+                          <FaCrown className="text-amber-500 text-[10px]" />
                           Administrator
                         </>
                       ) : (
@@ -236,15 +241,66 @@ function Navbar() {
                   </div>
                 </button>
 
-                {/* Top Right Logout Button */}
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center gap-2 px-3 py-2 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 font-semibold rounded-xl hover:bg-red-100 dark:hover:bg-red-900/50 transition-all duration-200 shadow-sm"
-                  title="Logout"
-                >
-                  <FaSignOutAlt className="text-sm" />
-                  <span className="hidden sm:inline text-xs">Logout</span>
-                </button>
+                {/* Floating Profile Dropdown Menu */}
+                {showProfileDropdown && (
+                  <>
+                    <div 
+                      className="fixed inset-0 z-40" 
+                      onClick={() => setShowProfileDropdown(false)} 
+                    />
+
+                    <div className="absolute right-0 mt-3 w-64 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800 z-50 p-4 transform transition-all duration-300">
+                      {/* User Info Header */}
+                      <div className="flex items-center gap-3 pb-3 border-b border-gray-100 dark:border-gray-800 mb-3">
+                        <div className="w-11 h-11 bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md">
+                          {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                        </div>
+                        <div className="overflow-hidden">
+                          <p className="font-bold text-gray-900 dark:text-gray-100 text-sm truncate">{user.name}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user.email || 'Admin User'}</p>
+                          <span className="inline-block mt-1 px-2.5 py-0.5 bg-orange-100 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 text-[10px] font-bold rounded-full">
+                            {user.isAdmin ? '👑 Administrator' : 'Member'}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Quick Profile Links */}
+                      <div className="space-y-1 mb-3">
+                        <Link
+                          to="/profile"
+                          onClick={() => setShowProfileDropdown(false)}
+                          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-gray-800 hover:text-orange-600 transition-colors"
+                        >
+                          <FaUser className="text-orange-500" />
+                          My Profile
+                        </Link>
+
+                        <Link
+                          to="/orders"
+                          onClick={() => setShowProfileDropdown(false)}
+                          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-gray-800 hover:text-orange-600 transition-colors"
+                        >
+                          <span className="text-sm">📋</span>
+                          My Orders
+                        </Link>
+                      </div>
+
+                      {/* Logout Action */}
+                      <div className="pt-2 border-t border-gray-100 dark:border-gray-800">
+                        <button
+                          onClick={() => {
+                            setShowProfileDropdown(false);
+                            handleLogout();
+                          }}
+                          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-900/60 text-red-600 dark:text-red-400 text-sm font-bold rounded-xl transition-all duration-200 shadow-sm"
+                        >
+                          <FaSignOutAlt className="text-sm" />
+                          Logout
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             ) : (
               <Link
