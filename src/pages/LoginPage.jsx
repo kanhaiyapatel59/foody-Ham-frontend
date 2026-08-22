@@ -16,7 +16,8 @@ import {
   FaShoppingBag,
   FaStar,
   FaTruck,
-  FaShieldAlt
+  FaShieldAlt,
+  FaArrowLeft
 } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -30,7 +31,6 @@ function LoginPage() {
   });
   const [localError, setLocalError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
 
   const { login, register, error: authError, clearError } = useAuth();
   const navigate = useNavigate();
@@ -96,13 +96,146 @@ function LoginPage() {
   const displayError = localError || authError;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-amber-50 flex items-center justify-center py-8 px-4">
-      {/* 🚨 CHANGE 1: Centered Layout */}
-      <div className="max-w-md w-full"> 
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-amber-50 flex items-center justify-center py-8 px-4 relative overflow-hidden">
+      {/* 3D Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Floating Food Icons */}
         <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+          animate={{
+            y: [0, -20, 0],
+            rotate: [0, 5, 0]
+          }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="absolute top-20 left-10 text-6xl opacity-20"
+        >
+          🍕
+        </motion.div>
+        <motion.div
+          animate={{
+            y: [0, 20, 0],
+            rotate: [0, -5, 0]
+          }}
+          transition={{
+            duration: 5,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 0.5
+          }}
+          className="absolute top-40 right-20 text-5xl opacity-20"
+        >
+          🍔
+        </motion.div>
+        <motion.div
+          animate={{
+            y: [0, -15, 0],
+            rotate: [0, 10, 0]
+          }}
+          transition={{
+            duration: 4.5,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1
+          }}
+          className="absolute bottom-32 left-20 text-5xl opacity-20"
+        >
+          🍜
+        </motion.div>
+        <motion.div
+          animate={{
+            y: [0, 25, 0],
+            rotate: [0, -8, 0]
+          }}
+          transition={{
+            duration: 5.5,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1.5
+          }}
+          className="absolute bottom-20 right-10 text-6xl opacity-20"
+        >
+          🍰
+        </motion.div>
+        <motion.div
+          animate={{
+            y: [0, -18, 0],
+            rotate: [0, 6, 0]
+          }}
+          transition={{
+            duration: 4.8,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 2
+          }}
+          className="absolute top-1/2 left-5 text-5xl opacity-20"
+        >
+          🥗
+        </motion.div>
+        <motion.div
+          animate={{
+            y: [0, 22, 0],
+            rotate: [0, -7, 0]
+          }}
+          transition={{
+            duration: 5.2,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 2.5
+          }}
+          className="absolute top-1/3 right-5 text-5xl opacity-20"
+        >
+          🍱
+        </motion.div>
+
+        {/* Gradient Orbs */}
+        <motion.div
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.5, 0.3]
+          }}
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="absolute top-10 right-1/4 w-64 h-64 bg-orange-300 rounded-full blur-3xl"
+        />
+        <motion.div
+          animate={{
+            scale: [1, 1.3, 1],
+            opacity: [0.2, 0.4, 0.2]
+          }}
+          transition={{
+            duration: 7,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1
+          }}
+          className="absolute bottom-20 left-1/4 w-72 h-72 bg-amber-300 rounded-full blur-3xl"
+        />
+      </div>
+
+      {/* Back to Home Button */}
+      <Link
+        to="/"
+        className="fixed top-6 left-6 flex items-center gap-2 px-4 py-2 bg-white/90 backdrop-blur-sm hover:bg-white text-gray-700 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 z-50"
+      >
+        <FaArrowLeft />
+        <span className="font-medium">Back to Home</span>
+      </Link>
+
+      {/* 🚨 CHANGE 1: Centered Layout */}
+      <div className="max-w-md w-full relative z-10"> 
+        <motion.div
+            key={isLogin ? 'login' : 'signup'}
+            initial={{ rotateY: 90, opacity: 0 }}
+            animate={{ rotateY: 0, opacity: 1 }}
+            exit={{ rotateY: -90, opacity: 0 }}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
+            style={{ transformStyle: "preserve-3d" }}
         >
           <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 lg:p-12 border border-gray-100">
             
@@ -227,42 +360,11 @@ function LoginPage() {
                 </AnimatePresence>
               </div>
 
-              {/* Password Requirements (Register Only, placed after password fields) */}
-              <AnimatePresence>
-                {!isLogin && (
-                  <motion.div
-                    key="password-reqs"
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="pt-2"
-                  >
-                    <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-4">
-                      <p className="text-sm font-medium text-gray-700 mb-2">Password Requirements:</p>
-                      <ul className="text-sm text-gray-600 space-y-1">
-                        <li className="flex items-center gap-2">
-                          <FaCheck className="text-green-500" />
-                          At least 6 characters
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <FaCheck className="text-green-500" />
-                          Contains letters and numbers
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <FaCheck className="text-green-500" />
-                          Passwords must match
-                        </li>
-                      </ul>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 type="submit"
-                disabled={loading || googleLoading}
+                disabled={loading}
                 className="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white py-4 rounded-xl font-semibold hover:shadow-2xl hover:shadow-orange-500/25 hover:from-orange-600 hover:to-amber-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
               >
                 {loading ? (
@@ -278,57 +380,17 @@ function LoginPage() {
               </motion.button>
             </form>
 
-            {/* 🚨 CHANGE 2: Social Login Buttons moved to the bottom */}
-            <div className="mt-8">
-              {/* Divider */}
-              <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-white text-gray-500">Or continue with</span>
-                </div>
-              </div>
-
-              {/* Social Login Buttons */}
-              <div className="grid grid-cols-1 gap-4">
-                {/* Google Button - Coming Soon */}
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => setLocalError('Google authentication coming soon!')}
-                  disabled={true}
-                  className="w-full bg-white border-2 border-gray-200 text-gray-700 py-4 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-3 opacity-70 cursor-not-allowed shadow-sm"
-                >
-                  <FaGoogle className="text-red-500 text-xl" />
-                  <span>Google Auth (Coming Soon)</span>
-                </motion.button>
-              </div>
-            </div>
-
             {/* Toggle Login/Register */}
             <div className="text-center pt-6 mt-8 border-t border-gray-100">
               <p className="text-gray-600">
                 {isLogin ? "Don't have an account?" : "Already have an account?"}
                 <button
                   onClick={() => setIsLogin(!isLogin)}
-                  disabled={loading || googleLoading}
+                  disabled={loading}
                   className="ml-2 text-orange-600 font-semibold hover:text-orange-700 transition-colors disabled:opacity-50"
                 >
                   {isLogin ? 'Sign Up' : 'Sign In'}
                 </button>
-              </p>
-            </div>
-            
-            {/* 🚨 CHANGE 3: Removed Demo Accounts Section */}
-
-            {/* Terms & Privacy */}
-            <div className="mt-6 text-center">
-              <p className="text-xs text-gray-500">
-                By continuing, you agree to our{' '}
-                <a href="#" className="text-orange-500 hover:text-orange-600 font-medium">Terms</a>
-                {' '}and{' '}
-                <a href="#" className="text-orange-500 hover:text-orange-600 font-medium">Privacy Policy</a>
               </p>
             </div>
           </div>

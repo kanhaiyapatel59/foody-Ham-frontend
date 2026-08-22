@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import FoodCard from '../components/FoodCard';
 import PromotionBanner from '../components/PromotionBanner';
 import { useRecentlyViewed } from '../context/RecentlyViewedContext';
-import { useLanguage } from '../context/LanguageContext';
 import axios from 'axios';
 // Import Swiper React components - you'll need to install this
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -68,7 +67,6 @@ function HomePage() {
   const [isHeroVisible, setIsHeroVisible] = useState(true);
   const heroSectionRef = useRef(null);
   const { recentlyViewed } = useRecentlyViewed();
-  const { t, formatCurrency } = useLanguage();
 
   // Enhanced Background Slider with crossfade effect
   useEffect(() => {
@@ -223,7 +221,7 @@ function HomePage() {
                         // Red fill button for dark background
                         className="px-8 py-3 bg-red-600 text-white text-lg font-semibold rounded-full shadow-lg shadow-red-500/30 hover:bg-red-700 transition-colors"
                     >
-                        {t('menu')}
+                        Menu
                     </Link>
                     <Link 
                         to="/reservations" 

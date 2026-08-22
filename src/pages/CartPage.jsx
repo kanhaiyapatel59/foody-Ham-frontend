@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
-import { useLanguage } from '../context/LanguageContext';
 import { useGroupSplit } from '../context/GroupSplitContext';
 import { FaTrash, FaPlus, FaMinus, FaShoppingCart, FaCreditCard, FaSpinner, FaHistory } from 'react-icons/fa';
 import { Users } from 'lucide-react';
@@ -20,7 +19,6 @@ function CartPage() {
   } = useCart();
   
   const { user } = useAuth();
-  const { t, formatCurrency } = useLanguage();
   const navigate = useNavigate();
   const [error, setError] = useState('');
   const [recentOrders, setRecentOrders] = useState([]);
@@ -96,7 +94,7 @@ function CartPage() {
       <div className="container mx-auto px-4 py-12 text-center dark:bg-gray-950 min-h-screen">
         <div className="max-w-md mx-auto">
           <FaShoppingCart className="text-6xl text-gray-300 dark:text-gray-500 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-4">{t('emptyCart')}</h1>
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-4">{'Your cart is empty'}</h1>
           <p className="text-gray-600 dark:text-gray-400 mb-8">Add some delicious items from our menu!</p>
           
           {/* Quick Reorder Section */}
@@ -111,7 +109,7 @@ function CartPage() {
                     <div className="flex justify-between items-center">
                       <div className="text-left">
                         <p className="font-medium text-gray-800 dark:text-gray-200">
-                          {order.items.length} items - {formatCurrency(order.totalPrice)}
+                          {order.items.length} items - ${order.totalPrice.toFixed(2)}
                         </p>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
                           {new Date(order.createdAt).toLocaleDateString()}
@@ -122,7 +120,7 @@ function CartPage() {
                         disabled={loadingReorder === order._id}
                         className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 disabled:opacity-50 text-sm"
                       >
-                        {loadingReorder === order._id ? t('loading') : t('reorder')}
+                        {loadingReorder === order._id ? 'Loading...' : 'Reorder'}
                       </button>
                     </div>
                   </div>
@@ -149,7 +147,7 @@ function CartPage() {
 
   return (
     <div className="container mx-auto px-4 py-12 dark:bg-gray-950 min-h-screen">
-      <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-8">{t('cart')}</h1>
+      <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-8">{'Cart'}</h1>
       
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
@@ -203,10 +201,10 @@ function CartPage() {
                     </div>
                     <div className="text-right">
                       <div className="text-2xl font-bold text-orange-500">
-                        {formatCurrency((item.price || 0) * item.quantity)}
+                        ${((item.price || 0) * item.quantity).toFixed(2)}
                       </div>
                       <div className="text-gray-500 dark:text-gray-400 text-sm">
-                        {formatCurrency(item.price || 0)} each
+                        ${(item.price || 0).toFixed(2)} each
                       </div>
                     </div>
                   </div>
@@ -230,21 +228,21 @@ function CartPage() {
             <div className="space-y-4 mb-6">
               <div className="flex justify-between">
                 <span className="text-gray-600 dark:text-gray-400">Subtotal ({cartItems.reduce((sum, item) => sum + item.quantity, 0)} items)</span>
-                <span className="font-semibold">{formatCurrency(getCartTotal())}</span>
+                <span className="font-semibold">${getCartTotal().toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600 dark:text-gray-400">Shipping</span>
-                <span className="font-semibold">{formatCurrency(shippingFee)}</span>
+                <span className="font-semibold">${shippingFee.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600 dark:text-gray-400">Tax (8%)</span>
-                <span className="font-semibold">{formatCurrency(taxAmount)}</span>
+                <span className="font-semibold">${taxAmount.toFixed(2)}</span>
               </div>
               <div className="border-t pt-4">
                 <div className="flex justify-between text-xl font-bold">
-                  <span>{t('total')}</span>
+                  <span>{'Total'}</span>
                   <span className="text-orange-500">
-                    {formatCurrency(totalAmount)}
+                    ${totalAmount.toFixed(2)}
                   </span>
                 </div>
               </div>
@@ -255,7 +253,7 @@ function CartPage() {
               disabled={!user}
               className="w-full bg-orange-500 text-white py-3 rounded-lg text-lg font-semibold hover:bg-orange-600 transition duration-300 mb-3 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <FaCreditCard /> {!user ? t('login') + ' to ' + t('checkout') : t('checkout')}
+              <FaCreditCard /> {!user ? 'Login' + ' to ' + 'Checkout' : 'Checkout'}
             </button>
 
             <button 

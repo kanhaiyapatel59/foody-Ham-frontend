@@ -244,20 +244,37 @@ export const CartProvider = ({ children }) => {
     try {
       setLoading(true);
       let successCount = 0;
+      let skippedItems = [];
       
       for (const item of orderItems) {
         try {
+          // Check if adding this item would exceed limit
+          const existingItem = cartItems.find(cartItem => 
+            (cartItem.id || cartItem._id || cartItem.product) === item.product
+          );
+          const currentQuantity = existingItem ? existingItem.quantity : 0;
+          const quantityToAdd = Math.min(item.quantity, 10 - currentQuantity);
+
+          if (quantityToAdd <= 0) {
+            skippedItems.push(item.name);
+            continue;
+          }
+
           await addToCart({
             _id: item.product,
             id: item.product,
             name: item.name,
             price: item.price,
             image: item.image
-          }, item.quantity);
+          }, quantityToAdd);
           successCount++;
         } catch (error) {
           console.error(`Failed to add ${item.name} to cart:`, error);
         }
+      }
+
+      if (skippedItems.length > 0) {
+        alert(`⚠️ Some items were skipped due to 10-item limit: ${skippedItems.join(', ')}`);
       }
       
       return { success: true, addedItems: successCount, totalItems: orderItems.length };
@@ -267,7 +284,7 @@ export const CartProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [addToCart]);
+  }, [addToCart, cartItems]);
 
   const value = {
     cartItems,

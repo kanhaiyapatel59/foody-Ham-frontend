@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { useGroupSplit } from '../context/GroupSplitContext';
-import { useLanguage } from '../context/LanguageContext';
 import { Users, DollarSign, Calculator, Share2, X } from 'lucide-react';
 
 const GroupSplitModal = ({ isOpen, onClose, orderData }) => {
   const { initializeGroupSplit, splitData, splitEqually, assignItemToParticipant, clearGroupSplit } = useGroupSplit();
-  const { formatCurrency } = useLanguage();
   const [participants, setParticipants] = useState([
     { id: 1, name: '', email: '', phone: '' }
   ]);
@@ -78,7 +76,7 @@ const GroupSplitModal = ({ isOpen, onClose, orderData }) => {
                 Who's splitting this bill?
               </h3>
               <p className="text-gray-600 dark:text-gray-400">
-                Add friends who will share this {formatCurrency(orderData.totalAmount)} order
+                Add friends who will share this ${orderData.totalAmount.toFixed(2)} order
               </p>
             </div>
 
@@ -157,7 +155,7 @@ const GroupSplitModal = ({ isOpen, onClose, orderData }) => {
                   Split Method
                 </h3>
                 <div className="text-2xl font-bold text-orange-500">
-                  {formatCurrency(orderData.totalAmount)}
+                  ${orderData.totalAmount.toFixed(2)}
                 </div>
               </div>
 
@@ -207,7 +205,7 @@ const GroupSplitModal = ({ isOpen, onClose, orderData }) => {
                     </div>
                     <div className="text-right">
                       <div className="text-lg font-bold text-orange-500">
-                        {formatCurrency(participant.amount)}
+                        ${participant.amount.toFixed(2)}
                       </div>
                       <div className="text-xs text-gray-500">
                         {participant.items.length} items

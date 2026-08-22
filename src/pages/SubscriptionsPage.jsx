@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useLanguage } from '../context/LanguageContext';
 import { Calendar, Clock, MapPin, CreditCard, Play, Pause, X } from 'lucide-react';
 import MealPlanCreator from '../components/MealPlanCreator';
 import axios from 'axios';
@@ -20,7 +19,6 @@ api.interceptors.request.use((config) => {
 
 const SubscriptionsPage = () => {
   const { user } = useAuth();
-  const { formatCurrency } = useLanguage();
   const [subscriptions, setSubscriptions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -132,7 +130,7 @@ const SubscriptionsPage = () => {
                   </div>
                   <div className="text-right">
                     <div className="text-2xl font-bold text-orange-500">
-                      {formatCurrency(subscription.totalPrice)}
+                      ${subscription.totalPrice.toFixed(2)}
                     </div>
                     <div className="text-sm text-gray-500">
                       per {subscription.planType}
@@ -180,7 +178,7 @@ const SubscriptionsPage = () => {
                           </div>
                         </div>
                         <span className="font-semibold text-gray-900 dark:text-white">
-                          {formatCurrency(item.product.price * item.quantity)}
+                          ${(item.product.price * item.quantity).toFixed(2)}
                         </span>
                       </div>
                     ))}

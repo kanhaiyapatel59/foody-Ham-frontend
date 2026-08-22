@@ -4,7 +4,6 @@ import SkeletonCard from '../components/SkeletonCard';
 import VoiceSearch from '../components/VoiceSearch';
 import { useNavigate, Link } from 'react-router-dom';
 import { useRecentlyViewed } from '../context/RecentlyViewedContext';
-import { useLanguage } from '../context/LanguageContext';
 import axios from 'axios';
 
 const api = axios.create({
@@ -58,7 +57,6 @@ function MenuPage() {
   const [sortBy, setSortBy] = useState('newest');
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const { recentlyViewed, addToRecentlyViewed } = useRecentlyViewed();
-  const { t, formatCurrency } = useLanguage();
 
   // Background Slider Effect
   useEffect(() => {
@@ -222,7 +220,7 @@ function MenuPage() {
                     </div>
                     <input
                         type="text"
-                        placeholder={t('searchPlaceholder')}
+                        placeholder={'Search dishes by name, description, or ingredients...'}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="w-full pl-10 p-4 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all"
@@ -239,7 +237,7 @@ function MenuPage() {
                     onChange={(e) => setSelectedCategory(e.target.value)}
                     className="w-full p-4 bg-gray-700 border border-gray-600 rounded-xl text-white appearance-none focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all"
                 >
-                    <option value="all">{t('allCategories')}</option>
+                    <option value="all">{'All Categories'}</option>
                     <option value="burgers">Burgers</option>
                     <option value="pizza">Pizza</option>
                     <option value="pasta">Pasta</option>
@@ -409,7 +407,7 @@ function MenuPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-white mb-3">{t('noResults')}</h3>
+              <h3 className="text-2xl font-bold text-white mb-3">{'No Results Found'}</h3>
               <p className="text-gray-400 text-lg mb-6">
                 Try adjusting your search or filter to discover our delicious offerings
               </p>
@@ -420,7 +418,7 @@ function MenuPage() {
                 }}
                 className="px-6 py-3 bg-gradient-to-r from-red-600 to-orange-500 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-red-500/25 transition-all shadow-md"
               >
-                {t('clearFilters')}
+                {'Clear Filters'}
               </button>
             </div>
           </div>
@@ -451,7 +449,7 @@ function MenuPage() {
                         </h3>
                         {/* Price moved up and made prominent */}
                         <span className="text-2xl font-extrabold text-red-500 ml-4">
-                          {formatCurrency(item.price)}
+                          {`$${item.price.toFixed(2)}`}
                         </span>
                       </div>
                       
@@ -515,7 +513,7 @@ function MenuPage() {
                           className="w-full h-20 object-cover rounded mb-2"
                         />
                         <h4 className="text-white text-sm font-medium truncate">{item.name}</h4>
-                        <p className="text-orange-500 text-sm font-bold">{formatCurrency(item.price)}</p>
+                        <p className="text-orange-500 text-sm font-bold">{`$${item.price.toFixed(2)}`}</p>
                       </Link>
                     ))}
                   </div>

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useLanguage } from '../context/LanguageContext';
 import { Calendar, Clock, MapPin, CreditCard, X, Plus, Minus } from 'lucide-react';
 import axios from 'axios';
 
@@ -17,7 +16,6 @@ api.interceptors.request.use((config) => {
 });
 
 const MealPlanCreator = ({ onClose, onSuccess }) => {
-  const { formatCurrency } = useLanguage();
   const [step, setStep] = useState(1);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -312,7 +310,7 @@ const MealPlanCreator = ({ onClose, onSuccess }) => {
                       <div className="flex items-center justify-between mb-2">
                         <h5 className="font-medium dark:text-white">{product.name}</h5>
                         <span className="text-orange-500 font-bold">
-                          {formatCurrency(product.price)}
+                          ${product.price.toFixed(2)}
                         </span>
                       </div>
                       <div className="flex flex-wrap gap-1">
@@ -374,7 +372,7 @@ const MealPlanCreator = ({ onClose, onSuccess }) => {
                       {item.productData.name} x{item.quantity} ({item.dayOfWeek})
                     </span>
                     <span className="dark:text-white">
-                      {formatCurrency(item.productData.price * item.quantity)}
+                      ${item.productData.price * item.quantity.toFixed(2)}
                     </span>
                   </div>
                 ))}
@@ -384,7 +382,7 @@ const MealPlanCreator = ({ onClose, onSuccess }) => {
                       Total ({planData.planType === 'weekly' ? '10%' : '15%'} discount applied)
                     </span>
                     <span className="text-orange-500 text-lg">
-                      {formatCurrency(calculateTotal())}
+                      ${calculateTotal().toFixed(2)}
                     </span>
                   </div>
                 </div>

@@ -4,7 +4,6 @@ import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from "./context/CartContext";
 import { WishlistProvider } from './context/WishlistContext';
 import { RecentlyViewedProvider } from './context/RecentlyViewedContext';
-import { LanguageProvider } from './context/LanguageContext';
 import { ChatProvider } from './context/ChatContext';
 import { GroupSplitProvider } from './context/GroupSplitContext';
 import { SpinProvider, useSpin } from './context/SpinContext';
@@ -41,6 +40,7 @@ import AdminPromotionsPage from './pages/AdminPromotionsPage';
 import LoyaltyPage from './pages/LoyaltyPage';
 import SubscriptionsPage from './pages/SubscriptionsPage';
 import AdminSpinPage from './pages/AdminSpinPage';
+
 
 function AppContent() {
   const { showSpin, closeSpin } = useSpin();
@@ -194,6 +194,8 @@ function AppContent() {
                 <AdminSpinPage />
               </ProtectedRoute>
             } />
+
+
           </Route>
         </Routes>
       </Router>
@@ -207,23 +209,21 @@ function AppContent() {
 function App() {
   return (
     <ErrorBoundary>
-      <LanguageProvider>
-        <ChatProvider>
-          <GroupSplitProvider>
-            <AuthProvider>
-              <CartProvider>
-                <WishlistProvider>
-                  <RecentlyViewedProvider>
-                    <SpinProvider>
-                      <AppContent />
-                    </SpinProvider>
-                  </RecentlyViewedProvider>
-                </WishlistProvider>
-              </CartProvider>
-            </AuthProvider>
-          </GroupSplitProvider>
-        </ChatProvider>
-      </LanguageProvider>
+      <ChatProvider>
+        <GroupSplitProvider>
+          <AuthProvider>
+            <CartProvider>
+              <WishlistProvider>
+                <RecentlyViewedProvider>
+                  <SpinProvider>
+                    <AppContent />
+                  </SpinProvider>
+                </RecentlyViewedProvider>
+              </WishlistProvider>
+            </CartProvider>
+          </AuthProvider>
+        </GroupSplitProvider>
+      </ChatProvider>
     </ErrorBoundary>
   );
 }

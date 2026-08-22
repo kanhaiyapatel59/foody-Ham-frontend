@@ -4,8 +4,6 @@ import { FaShoppingCart, FaUser, FaPlus, FaSignOutAlt, FaBars, FaTimes, FaSpinne
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useDarkMode } from '../context/DarkModeContext';
-import { useLanguage } from '../context/LanguageContext';
-import LanguageSwitcher from './LanguageSwitcher';
 import AdminSidebar from './AdminSidebar';
 import UserSidebar from './UserSidebar';
 
@@ -16,7 +14,6 @@ function Navbar() {
   const { user, logout, loading: authLoading } = useAuth();
   const { getCartCount, loading: cartLoading } = useCart();
   const { isDarkMode, toggleDarkMode } = useDarkMode();
-  const { t } = useLanguage();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showAdminSidebar, setShowAdminSidebar] = useState(false);
   const [showUserSidebar, setShowUserSidebar] = useState(false);
@@ -141,9 +138,6 @@ function Navbar() {
 
           {/* User Actions with Enhanced Design */}
           <div className="flex items-center space-x-4 lg:space-x-6">
-            {/* Language Switcher */}
-            <LanguageSwitcher />
-            
             {/* Dark Mode Toggle */}
             <button
               onClick={(e) => {
