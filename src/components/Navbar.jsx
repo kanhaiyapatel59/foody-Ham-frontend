@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaShoppingCart, FaUser, FaPlus, FaSignOutAlt, FaBars, FaTimes, FaSpinner, FaHome, FaUtensils, FaInfoCircle, FaEnvelope, FaCrown, FaHeart, FaMoon, FaSun } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
@@ -19,6 +19,25 @@ function Navbar() {
   const [showUserSidebar, setShowUserSidebar] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const leaveTimeoutRef = useRef(null);
+
+  const handleMouseEnterSidebar = () => {
+    if (leaveTimeoutRef.current) {
+      clearTimeout(leaveTimeoutRef.current);
+    }
+    if (user?.isAdmin) {
+      setShowAdminSidebar(true);
+    } else if (user) {
+      setShowUserSidebar(true);
+    }
+  };
+
+  const handleMouseLeaveSidebar = () => {
+    leaveTimeoutRef.current = setTimeout(() => {
+      setShowAdminSidebar(false);
+      setShowUserSidebar(false);
+    }, 250);
+  };
 
   // Detect scroll for navbar effect
   useEffect(() => {
@@ -80,6 +99,8 @@ function Navbar() {
           <div className="flex items-center gap-3">
             {user && (
               <button
+                onMouseEnter={handleMouseEnterSidebar}
+                onMouseLeave={handleMouseLeaveSidebar}
                 onClick={() => user.isAdmin ? setShowAdminSidebar(!showAdminSidebar) : setShowUserSidebar(!showUserSidebar)}
                 className="p-2.5 rounded-2xl bg-white/90 dark:bg-gray-800/90 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400 hover:border-orange-400 dark:hover:border-orange-500 shadow-sm hover:shadow-md transition-all duration-300 transform active:scale-95 flex items-center justify-center group"
                 title={(showAdminSidebar || showUserSidebar) ? "Close Navigation Sidebar" : "Open Navigation Sidebar"}
@@ -427,6 +448,8 @@ function Navbar() {
       <AdminSidebar 
         isOpen={showAdminSidebar}
         onClose={() => setShowAdminSidebar(false)}
+        onMouseEnter={handleMouseEnterSidebar}
+        onMouseLeave={handleMouseLeaveSidebar}
         user={user}
         onLogout={handleLogout}
       />
@@ -435,6 +458,8 @@ function Navbar() {
       <UserSidebar 
         isOpen={showUserSidebar}
         onClose={() => setShowUserSidebar(false)}
+        onMouseEnter={handleMouseEnterSidebar}
+        onMouseLeave={handleMouseLeaveSidebar}
         user={user}
         onLogout={handleLogout}
       />
