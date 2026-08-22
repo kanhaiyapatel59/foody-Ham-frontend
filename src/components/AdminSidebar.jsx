@@ -11,7 +11,7 @@ function AdminSidebar({ isOpen, onClose, user, onLogout }) {
         className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" 
         onClick={onClose}
       />
-      <div className="fixed top-0 right-0 h-full w-80 bg-white dark:bg-gray-900 shadow-2xl z-50 transform transition-transform duration-300 border-l-4 border-orange-500">
+      <div className="fixed top-0 left-0 h-full w-80 bg-white dark:bg-gray-900 shadow-2xl z-50 transform transition-transform duration-300 border-r-4 border-orange-500">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-gray-800 dark:to-gray-900">
           <div className="flex items-center gap-3">

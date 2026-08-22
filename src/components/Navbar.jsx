@@ -75,21 +75,35 @@ function Navbar() {
       <div className="container mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between">
           
-          {/* Logo with Enhanced Design */}
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="relative">
-              <div className="w-12 h-12 bg-gradient-to-br from-orange-500 via-orange-600 to-amber-500 rounded-2xl flex items-center justify-center shadow-[0_8px_16px_rgba(249,115,22,0.4)] group-hover:shadow-[0_12px_24px_rgba(249,115,22,0.5)] transition-all duration-300 transform group-hover:scale-105 group-hover:rotate-3">
-                <span className="text-white font-bold text-xl drop-shadow-lg">FH</span>
+          {/* Left Side: 3-Line Sidebar Menu Toggle + Logo */}
+          <div className="flex items-center gap-3">
+            {user && (
+              <button
+                onClick={() => user.isAdmin ? setShowAdminSidebar(!showAdminSidebar) : setShowUserSidebar(!showUserSidebar)}
+                className="p-2.5 bg-gradient-to-br from-orange-500 to-amber-500 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95 flex items-center justify-center"
+                title={(showAdminSidebar || showUserSidebar) ? "Close Navigation Menu" : "Open Navigation Menu"}
+                aria-label="Toggle Left Sidebar Menu"
+              >
+                {(showAdminSidebar || showUserSidebar) ? <FaTimes size={20} /> : <FaBars size={20} />}
+              </button>
+            )}
+
+            {/* Logo with Enhanced Design */}
+            <Link to="/" className="flex items-center gap-2 group">
+              <div className="relative">
+                <div className="w-12 h-12 bg-gradient-to-br from-orange-500 via-orange-600 to-amber-500 rounded-2xl flex items-center justify-center shadow-[0_8px_16px_rgba(249,115,22,0.4)] group-hover:shadow-[0_12px_24px_rgba(249,115,22,0.5)] transition-all duration-300 transform group-hover:scale-105 group-hover:rotate-3">
+                  <span className="text-white font-bold text-xl drop-shadow-lg">FH</span>
+                </div>
+                <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-red-500 to-red-600 rounded-full animate-pulse shadow-lg"></div>
               </div>
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-red-500 to-red-600 rounded-full animate-pulse shadow-lg"></div>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-2xl font-extrabold bg-gradient-to-r from-orange-600 via-orange-500 to-amber-600 bg-clip-text text-transparent drop-shadow-sm">
-                Foody-Ham
-              </span>
-              <span className="text-xs text-gray-600 dark:text-gray-400 font-semibold tracking-wide">Savor the Excellence</span>
-            </div>
-          </Link>
+              <div className="flex flex-col">
+                <span className="text-2xl font-extrabold bg-gradient-to-r from-orange-600 via-orange-500 to-amber-600 bg-clip-text text-transparent drop-shadow-sm">
+                  Foody-Ham
+                </span>
+                <span className="text-xs text-gray-600 dark:text-gray-400 font-semibold tracking-wide">Savor the Excellence</span>
+              </div>
+            </Link>
+          </div>
 
           {/* Desktop Navigation with Enhanced Design */}
           <div className="hidden lg:flex items-center space-x-1">
@@ -183,17 +197,18 @@ function Navbar() {
               ) : null}
             </Link>
 
-            {/* Enhanced User Dropdown */}
+            {/* Enhanced User Profile & Top Right Logout */}
             {authLoading ? (
               <div className="p-2.5 bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-md border border-gray-100">
                 <FaSpinner className="animate-spin text-gray-400" size={20} />
               </div>
             ) : user ? (
-              <div className="relative">
+              <div className="flex items-center gap-3">
                 <button
                   onClick={() => user.isAdmin ? setShowAdminSidebar(!showAdminSidebar) : setShowUserSidebar(!showUserSidebar)}
                   className="flex items-center gap-3 group"
                   disabled={authLoading}
+                  title="Toggle Sidebar Navigation"
                 >
                   <div className="relative">
                     <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-500 rounded-full flex items-center justify-center shadow-[0_4px_12px_rgba(249,115,22,0.3)] group-hover:shadow-[0_6px_16px_rgba(249,115,22,0.5)] transition-all duration-300 transform group-hover:scale-110">
@@ -221,7 +236,15 @@ function Navbar() {
                   </div>
                 </button>
 
-
+                {/* Top Right Logout Button */}
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 px-3 py-2 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 font-semibold rounded-xl hover:bg-red-100 dark:hover:bg-red-900/50 transition-all duration-200 shadow-sm"
+                  title="Logout"
+                >
+                  <FaSignOutAlt className="text-sm" />
+                  <span className="hidden sm:inline text-xs">Logout</span>
+                </button>
               </div>
             ) : (
               <Link
