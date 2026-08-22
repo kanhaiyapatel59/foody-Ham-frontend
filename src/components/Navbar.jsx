@@ -17,6 +17,7 @@ function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showAdminSidebar, setShowAdminSidebar] = useState(false);
   const [showUserSidebar, setShowUserSidebar] = useState(false);
+  const [isSidebarPinned, setIsSidebarPinned] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const leaveTimeoutRef = useRef(null);
@@ -25,18 +26,51 @@ function Navbar() {
     if (leaveTimeoutRef.current) {
       clearTimeout(leaveTimeoutRef.current);
     }
-    if (user?.isAdmin) {
-      setShowAdminSidebar(true);
-    } else if (user) {
-      setShowUserSidebar(true);
+    if (!isSidebarPinned) {
+      if (user?.isAdmin) {
+        setShowAdminSidebar(true);
+      } else if (user) {
+        setShowUserSidebar(true);
+      }
     }
   };
 
   const handleMouseLeaveSidebar = () => {
-    leaveTimeoutRef.current = setTimeout(() => {
+    if (!isSidebarPinned) {
+      leaveTimeoutRef.current = setTimeout(() => {
+        setShowAdminSidebar(false);
+        setShowUserSidebar(false);
+      }, 250);
+    }
+  };
+
+  const handleToggleSidebarClick = () => {
+    if (leaveTimeoutRef.current) {
+      clearTimeout(leaveTimeoutRef.current);
+    }
+    const isCurrentlyOpen = showAdminSidebar || showUserSidebar;
+
+    if (isCurrentlyOpen && isSidebarPinned) {
+      setIsSidebarPinned(false);
       setShowAdminSidebar(false);
       setShowUserSidebar(false);
-    }, 250);
+    } else {
+      setIsSidebarPinned(true);
+      if (user?.isAdmin) {
+        setShowAdminSidebar(true);
+      } else if (user) {
+        setShowUserSidebar(true);
+      }
+    }
+  };
+
+  const handleCloseSidebar = () => {
+    if (leaveTimeoutRef.current) {
+      clearTimeout(leaveTimeoutRef.current);
+    }
+    setIsSidebarPinned(false);
+    setShowAdminSidebar(false);
+    setShowUserSidebar(false);
   };
 
   // Detect scroll for navbar effect
@@ -101,9 +135,13 @@ function Navbar() {
               <button
                 onMouseEnter={handleMouseEnterSidebar}
                 onMouseLeave={handleMouseLeaveSidebar}
-                onClick={() => user.isAdmin ? setShowAdminSidebar(!showAdminSidebar) : setShowUserSidebar(!showUserSidebar)}
-                className="p-2.5 rounded-2xl bg-white/90 dark:bg-gray-800/90 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400 hover:border-orange-400 dark:hover:border-orange-500 shadow-sm hover:shadow-md transition-all duration-300 transform active:scale-95 flex items-center justify-center group"
-                title={(showAdminSidebar || showUserSidebar) ? "Close Navigation Sidebar" : "Open Navigation Sidebar"}
+                onClick={handleToggleSidebarClick}
+                className={`p-2.5 rounded-2xl border transition-all duration-300 transform active:scale-95 flex items-center justify-center group ${
+                  isSidebarPinned 
+                    ? 'bg-orange-500 text-white border-orange-500 shadow-md shadow-orange-500/30 ring-2 ring-orange-400/50'
+                    : 'bg-white/90 dark:bg-gray-800/90 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400 hover:border-orange-400 dark:hover:border-orange-500 shadow-sm hover:shadow-md'
+                }`}
+                title={isSidebarPinned ? "Click to unlock/close sidebar" : "Hover to preview or click to lock sidebar open"}
                 aria-label="Toggle Left Sidebar Menu"
               >
                 {(showAdminSidebar || showUserSidebar) ? (
@@ -447,21 +485,23 @@ function Navbar() {
       {/* Admin Sidebar */}
       <AdminSidebar 
         isOpen={showAdminSidebar}
-        onClose={() => setShowAdminSidebar(false)}
+        onClose={handleCloseSidebar}
         onMouseEnter={handleMouseEnterSidebar}
         onMouseLeave={handleMouseLeaveSidebar}
         user={user}
         onLogout={handleLogout}
+        isPinned={isSidebarPinned}
       />
       
       {/* User Sidebar */}
       <UserSidebar 
         isOpen={showUserSidebar}
-        onClose={() => setShowUserSidebar(false)}
+        onClose={handleCloseSidebar}
         onMouseEnter={handleMouseEnterSidebar}
         onMouseLeave={handleMouseLeaveSidebar}
         user={user}
         onLogout={handleLogout}
+        isPinned={isSidebarPinned}
       />
     </nav>
   );
